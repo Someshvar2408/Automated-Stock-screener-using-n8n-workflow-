@@ -1,0 +1,778 @@
+{
+  "name": "NSE NIFTY Stock Screener with Automated Trading and Google Sheets Integration",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "id": "a0b984e9-1b7d-4687-a247-67e87fe8d741",
+      "name": "Schedule Stock Screening",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        3104
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-2",
+              "name": "autoTradingEnabled",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "id-3",
+              "name": "zerodhaApiKey",
+              "value": "YOUR_ZERODHA_API_KEY",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "zerodhaAccessToken",
+              "value": "YOUR_ZERODHA_ACCESS_TOKEN",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "googleSheetId",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "rsiOversoldThreshold",
+              "value": 30,
+              "type": "number"
+            },
+            {
+              "id": "id-7",
+              "name": "rsiOverboughtThreshold",
+              "value": 70,
+              "type": "number"
+            },
+            {
+              "id": "id-8",
+              "name": "volumeSpikeMultiplier",
+              "value": 1.5,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "02d51dd9-9c97-4fc7-bf43-bc8dc8128b98",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        928,
+        3104
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.nseindia.com/api/equity-stockIndices?index=NIFTY%2050",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Referer",
+              "value": "https://www.nseindia.com/"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "Accept-Encoding",
+              "value": "gzip, deflate, br"
+            },
+            {
+              "name": "Connection",
+              "value": "keep-alive"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fd128fb0-1005-4b7b-bad4-b4d0071abd25",
+      "name": "Fetch NIFTY 50 Stocks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1152,
+        2912
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.nseindia.com/api/equity-stockIndices?index=NIFTY%20MIDCAP%20100",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Referer",
+              "value": "https://www.nseindia.com/"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "Accept-Encoding",
+              "value": "gzip, deflate, br"
+            },
+            {
+              "name": "Connection",
+              "value": "keep-alive"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "637f79f5-f94c-4193-8cf7-e331fa79ea92",
+      "name": "Fetch NIFTY Midcap 100 Stocks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1152,
+        3104
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.nseindia.com/api/equity-stockIndices?index=NIFTY%20SMALLCAP%20100",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Referer",
+              "value": "https://www.nseindia.com/"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "Accept-Encoding",
+              "value": "gzip, deflate, br"
+            },
+            {
+              "name": "Connection",
+              "value": "keep-alive"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "721b363e-8f7c-48e5-8827-cc27a17ae134",
+      "name": "Fetch NIFTY Smallcap 100 Stocks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1152,
+        3296
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Merge stocks from NIFTY 50, Midcap 100, and Smallcap 100 with error handling and delay\ntry {\n  const nifty50 = $input.first().json.data || [];\n  const midcap100 = $input.all()[1]?.json.data || [];\n  const smallcap100 = $input.all()[2]?.json.data || [];\n  \n  const allStocks = [];\n  \n  // Process NIFTY 50 stocks\n  for (const stock of nifty50) {\n    try {\n      allStocks.push({\n        symbol: stock.symbol,\n        category: 'NIFTY 50',\n        companyName: stock.companyName || stock.name || stock.meta?.companyName || ''\n      });\n    } catch (error) {\n      console.error(`Error processing NIFTY 50 stock: ${stock.symbol}`, error);\n    }\n  }\n  \n  // Process NIFTY Midcap 100 stocks\n  for (const stock of midcap100) {\n    try {\n      allStocks.push({\n        symbol: stock.symbol,\n        category: 'NIFTY Midcap 100',\n        companyName: stock.companyName || stock.name || stock.meta?.companyName || ''\n      });\n    } catch (error) {\n      console.error(`Error processing NIFTY Midcap 100 stock: ${stock.symbol}`, error);\n    }\n  }\n  \n  // Process NIFTY Smallcap 100 stocks\n  for (const stock of smallcap100) {\n    try {\n      allStocks.push({\n        symbol: stock.symbol,\n        category: 'NIFTY Smallcap 100',\n        companyName: stock.companyName || stock.name || stock.meta?.companyName || ''\n      });\n    } catch (error) {\n      console.error(`Error processing NIFTY Smallcap 100 stock: ${stock.symbol}`, error);\n    }\n  }\n  \n  console.log(`Total stocks merged: ${allStocks.length}`);\n  console.log(`NIFTY 50: ${nifty50.length}, Midcap 100: ${midcap100.length}, Smallcap 100: ${smallcap100.length}`);\n  \n  // Return all stocks as separate items\n  return allStocks.map(stock => ({ json: stock }));\n  \n} catch (error) {\n  console.error('Critical error in stock merging:', error);\n  throw new Error(`Failed to merge stocks: ${error.message}`);\n}"
+      },
+      "id": "2aafef79-e666-41fd-a9cd-4a2b8d8efebf",
+      "name": "Merge All Stocks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1376,
+        3104
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://query1.finance.yahoo.com/v8/finance/chart/{{ $json.symbol }}.NS?interval=1d&range=1mo",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          },
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "1007bdb1-d91a-4b5c-ba01-97ed78cf02f0",
+      "name": "Get Stock Quote Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1600,
+        3104
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Technical Screening Logic for Stock Analysis with Error Handling\n// This code calculates RSI, checks volume spikes, identifies support/resistance levels,\n// and flags buy/sell opportunities based on configured thresholds\n\ntry {\n  const stockData = $input.item.json;\n  \n  // Check if chart data exists and is valid\n  if (!stockData.chart || !stockData.chart.result || stockData.chart.result === null) {\n    console.log(`Skipping stock - no chart data available or API returned null`);\n    return null;\n  }\n  \n  // Check if there's an error in the response\n  if (stockData.chart.error) {\n    console.log(`Skipping stock - API error: ${stockData.chart.error.description || 'Unknown error'}`);\n    return null;\n  }\n  \n  // Get configuration from Workflow Configuration node\n  const config = $('Workflow Configuration').first().json;\n  \n  // Default thresholds if not configured\n  const RSI_OVERSOLD = config.rsiOversoldThreshold || 30;\n  const RSI_OVERBOUGHT = config.rsiOverboughtThreshold || 70;\n  const VOLUME_SPIKE_MULTIPLIER = config.volumeSpikeMultiplier || 1.5;\n  \n  // Helper function to calculate RSI\n  function calculateRSI(prices, period = 14) {\n    if (!prices || prices.length < period + 1) return null;\n    \n    let gains = 0;\n    let losses = 0;\n    \n    // Calculate initial average gain/loss\n    for (let i = 1; i <= period; i++) {\n      const change = prices[i] - prices[i - 1];\n      if (change > 0) gains += change;\n      else losses += Math.abs(change);\n    }\n    \n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n    \n    // Calculate RSI\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    const rsi = 100 - (100 / (1 + rs));\n    \n    return rsi;\n  }\n  \n  // Helper function to detect volume spike\n  function detectVolumeSpike(currentVolume, avgVolume, multiplier) {\n    return currentVolume > (avgVolume * multiplier);\n  }\n  \n  // Helper function to identify support and resistance levels\n  function identifySupportResistance(prices, currentPrice, lookback = 20) {\n    if (!prices || prices.length < 3) return { support: null, resistance: null };\n    \n    // Find support (recent low)\n    const recentLows = prices.slice(-lookback).filter(p => p < currentPrice);\n    const support = recentLows.length > 0 ? Math.min(...recentLows) : null;\n    \n    // Find resistance (recent high)\n    const recentHighs = prices.slice(-lookback).filter(p => p > currentPrice);\n    const resistance = recentHighs.length > 0 ? Math.max(...recentHighs) : null;\n    \n    return { support, resistance };\n  }\n  \n  // Parse Yahoo Finance API response format\n  const chartResult = stockData.chart.result[0];\n  if (!chartResult) {\n    console.log('Skipping stock - empty chart result');\n    return null;\n  }\n  \n  const meta = chartResult.meta;\n  const indicators = chartResult.indicators?.quote?.[0];\n  \n  // Validate that meta and indicators exist\n  if (!meta || !indicators) {\n    console.log('Skipping stock - missing meta or indicators data');\n    return null;\n  }\n  \n  // Extract price and volume data from Yahoo Finance format\n  const currentPrice = meta.regularMarketPrice || 0;\n  const previousClose = meta.previousClose || meta.chartPreviousClose || 0;\n  const priceChange = currentPrice - previousClose;\n  const priceChangePercent = previousClose > 0 ? ((priceChange / previousClose) * 100) : 0;\n  \n  // Get volume data (latest value from array)\n  const volumeArray = indicators.volume || [];\n  const currentVolume = volumeArray[volumeArray.length - 1] || 0;\n  \n  // Calculate average volume from volume array\n  const avgVolume = volumeArray.length > 0 \n    ? volumeArray.reduce((sum, vol) => sum + (vol || 0), 0) / volumeArray.length \n    : currentVolume;\n  \n  // Get historical prices from close array for RSI calculation\n  const historicalPrices = (indicators.close || []).filter(price => price !== null);\n  \n  // Calculate technical indicators\n  const rsi = calculateRSI(historicalPrices);\n  const volumeSpike = detectVolumeSpike(currentVolume, avgVolume, VOLUME_SPIKE_MULTIPLIER);\n  const { support, resistance } = identifySupportResistance(historicalPrices, currentPrice);\n  \n  // Determine buy/sell signals\n  let signal = 'HOLD';\n  let signalStrength = 0;\n  const reasons = [];\n  \n  // RSI-based signals\n  if (rsi !== null) {\n    if (rsi < RSI_OVERSOLD) {\n      signal = 'BUY';\n      signalStrength += 3;\n      reasons.push(`RSI oversold (${rsi.toFixed(2)})`);\n    } else if (rsi > RSI_OVERBOUGHT) {\n      signal = 'SELL';\n      signalStrength += 3;\n      reasons.push(`RSI overbought (${rsi.toFixed(2)})`);\n    }\n  }\n  \n  // Volume spike signals\n  if (volumeSpike) {\n    signalStrength += 2;\n    reasons.push(`Volume spike detected (${(currentVolume / avgVolume).toFixed(2)}x avg)`);\n  }\n  \n  // Support/Resistance signals\n  if (support && currentPrice <= support * 1.02) {\n    if (signal !== 'SELL') signal = 'BUY';\n    signalStrength += 2;\n    reasons.push(`Near support level (${support.toFixed(2)})`);\n  }\n  \n  if (resistance && currentPrice >= resistance * 0.98) {\n    if (signal !== 'BUY') signal = 'SELL';\n    signalStrength += 2;\n    reasons.push(`Near resistance level (${resistance.toFixed(2)})`);\n  }\n  \n  // Determine if this is a trading opportunity\n  const isOpportunity = signalStrength >= 3 && (signal === 'BUY' || signal === 'SELL');\n  \n  // Return enriched stock data with screening results\n  return {\n    json: {\n      symbol: stockData.symbol || meta.symbol,\n      companyName: stockData.companyName || meta.longName || meta.shortName || '',\n      category: stockData.category || '',\n      currentPrice: currentPrice,\n      priceChange: priceChange,\n      priceChangePercent: priceChangePercent,\n      volume: currentVolume,\n      signal: signal,\n      signalStrength: signalStrength,\n      isOpportunity: isOpportunity,\n      reasons: reasons.join(', '),\n      rsi: rsi ? rsi.toFixed(2) : 'N/A',\n      volumeSpike: volumeSpike,\n      support: support ? support.toFixed(2) : 'N/A',\n      resistance: resistance ? resistance.toFixed(2) : 'N/A',\n      timestamp: new Date().toISOString()\n    }\n  };\n  \n} catch (error) {\n  console.error('Error processing stock data:', error.message);\n  console.error('Stock data:', JSON.stringify($input.item.json, null, 2));\n  return null;\n}"
+      },
+      "id": "64b6b784-2536-4348-a329-421ad51550e4",
+      "name": "Apply Screening Logic",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1824,
+        3104
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.isOpportunity }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "810e8be4-fdaa-4ff3-8734-28f696fd89a0",
+      "name": "Check If Opportunities Found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2048,
+        3104
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1y2zYF_UI3BUNPwjx0qbKy6wuvdonPCpVe5GUTqM8ajo",
+          "mode": "list",
+          "cachedResultName": "Trade & Performance Tracker-Audit session 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y2zYF_UI3BUNPwjx0qbKy6wuvdonPCpVe5GUTqM8ajo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Trade Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y2zYF_UI3BUNPwjx0qbKy6wuvdonPCpVe5GUTqM8ajo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Sector": "={{ $json.category }}",
+            "Stock Name": "={{ $json.companyName }}",
+            "TIKR": "={{ $json.symbol }}",
+            "CMP": "={{ $json.currentPrice }}",
+            "Percentage change today": "={{ $json.priceChangePercent }}",
+            "Entry": "={{ $json.currentPrice }}",
+            "Qty": "",
+            "Investment Value": "",
+            "Target": "={{ $json.resistance }}",
+            "Stop loss": "={{ $json.support }}",
+            "Reward": "",
+            "Risk": "",
+            "RRR": "",
+            "Current Market Value": "={{ $json.currentPrice }}",
+            "Profit or Loss": "",
+            "Action": "={{ $json.signal }}",
+            "Target/Stop Loss Trigger": "={{ $json.reasons }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Sector",
+              "displayName": "Sector",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stock Name",
+              "displayName": "Stock Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TIKR",
+              "displayName": "TIKR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CMP",
+              "displayName": "CMP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Percentage change today",
+              "displayName": "Percentage change today",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Entry",
+              "displayName": "Entry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Qty",
+              "displayName": "Qty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Investment Value",
+              "displayName": "Investment Value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Target",
+              "displayName": "Target",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stop loss",
+              "displayName": "Stop loss",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reward",
+              "displayName": "Reward",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Risk",
+              "displayName": "Risk",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "RRR",
+              "displayName": "RRR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Current Market Value",
+              "displayName": "Current Market Value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Profit or Loss",
+              "displayName": "Profit or Loss",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Action",
+              "displayName": "Action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Target/Stop Loss Trigger",
+              "displayName": "Target/Stop Loss Trigger",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "66c8d8b4-8424-4bd3-8ac9-102390ca3739",
+      "name": "Update Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2272,
+        3104
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jvqNeofJ9kX3XU5w",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('Workflow Configuration').first().json.autoTradingEnabled }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "bb113972-ec6c-453d-86b4-5ef1be7b9b32",
+      "name": "Check Auto-Trading Enabled",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2496,
+        3104
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.kite.trade/orders/regular",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Kite-Version",
+              "value": "3"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'token ' + $('Workflow Configuration').first().json.zerodhaApiKey + ':' + $('Workflow Configuration').first().json.zerodhaAccessToken }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "tradingsymbol",
+              "value": "={{ $json.tradingsymbol }}"
+            },
+            {
+              "name": "exchange",
+              "value": "NSE"
+            },
+            {
+              "name": "transaction_type",
+              "value": "={{ $json.signal === 'BUY' ? 'BUY' : 'SELL' }}"
+            },
+            {
+              "name": "quantity",
+              "value": "={{ $json.quantity }}"
+            },
+            {
+              "name": "order_type",
+              "value": "LIMIT"
+            },
+            {
+              "name": "price",
+              "value": "={{ $json.price }}"
+            },
+            {
+              "name": "product",
+              "value": "CNC"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7a653e24-4f58-4e8a-a710-bbe51c799fe6",
+      "name": "Place Order via Zerodha Kite API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2720,
+        3104
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "6604bd0d-d94f-4e4b-9ec5-6d9d684a3126",
+      "name": "Filter Valid Stocks",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        2688
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Stock Screening": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Fetch NIFTY 50 Stocks",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch NIFTY Midcap 100 Stocks",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch NIFTY Smallcap 100 Stocks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch NIFTY 50 Stocks": {
+      "main": [
+        [
+          {
+            "node": "Merge All Stocks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch NIFTY Midcap 100 Stocks": {
+      "main": [
+        [
+          {
+            "node": "Merge All Stocks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch NIFTY Smallcap 100 Stocks": {
+      "main": [
+        [
+          {
+            "node": "Merge All Stocks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge All Stocks": {
+      "main": [
+        [
+          {
+            "node": "Get Stock Quote Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Stock Quote Data": {
+      "main": [
+        [
+          {
+            "node": "Apply Screening Logic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Screening Logic": {
+      "main": [
+        [
+          {
+            "node": "Check If Opportunities Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Opportunities Found": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Check Auto-Trading Enabled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Auto-Trading Enabled": {
+      "main": [
+        [
+          {
+            "node": "Place Order via Zerodha Kite API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1b1e6769-3af5-4bd8-9328-46c693cd995a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c3e982c47339d97c21a425bb0567589cac331bb8c0805ab463b48ba32f6b8ca0"
+  },
+  "id": "4AFnZJMhwEyMzZme",
+  "tags": []
+}
