@@ -182,9 +182,12 @@ autoTradingEnabled = true
 
 ## 🧑‍💻 Author
 
-**Someshvar**
+**Someshvar Sayapaneni Gopi**
+
 🎓 M.Sc. in Communication Engineering with Machine Learning, Data Science and Artificial Intelligence – Aalto University
+
 💡 Interests: Data Science, Machine Learning, DevOps and Intelligent Automation
+
 🔗 [LinkedIn](https://www.linkedin.com/in/someshvar)
 
 ---
