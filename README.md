@@ -13,17 +13,16 @@
   <a href="https://developers.kite.trade/" target="_blank">
     <img src="https://img.shields.io/badge/Trading%20API-Zerodha%20Kite-blue?style=for-the-badge&logo=zerodha" alt="Zerodha Badge"/>
   </a>
-  <a href="https://workspace.google.com/marketplace/app/google_sheets/584050775912" target="_blank">
+  <a href="https://r.search.yahoo.com/_ylt=AwrkgFEwmQRpxhokHwOHLgx.;_ylu=Y29sbwMEcG9zAzEEdnRpZAMEc2VjA3Ny/RV=2/RE=1761937841/RO=10/RU=https%3a%2f%2fdocs.google.com%2fspreadsheets%2fu%2f0%2f/RK=2/RS=mqMvbBkzhbQPr9IJhWRf7LXcIIU-" target="_blank">
     <img src="https://img.shields.io/badge/Integrated%20with-Google%20Sheets-34A853?style=for-the-badge&logo=googlesheets&logoColor=white" alt="Google Sheets Badge"/>
   </a>
 </p>
 
 <p align="center">
   <a href="#-features">Features</a> •
-  <a href="#-setup-guide">Setup</a> •
   <a href="#-workflow-overview">Workflow</a> •
   <a href="#-trading-logic-summary">Logic</a> •
-  <a href="#-author">Author</a>
+  <a href="#-dependencies">Dependencies</a>
 </p>
 
 ---
